@@ -26,37 +26,5 @@ export const fieldsMessage: Array<CoreModelsInterface.DataFiled> = [
     placeholder: 'Написаи повідомлення...',
   },
 ];
-export const chatsList: Array<CoreModelsInterface.Chat> = [
-  {
-    id: 1,
-    name: 'AP Assistant',
-    countMessage: 0,
-    lastMessage: '❗️ Наразі немає жодних заявок, що потребують погодження.',
-    image: null,
-    data: new Date().toISOString(),
-    message: {messageText: ''},
-  },
-  {
-    id: 2,
-    name: 'AP Elevator ',
-    countMessage: 2,
-    lastMessage:
-      'Ви обрали відпустку по компанії "АГРОПРОСПЕРІС, ТОВ" Вкажіть дату початку відпустки у форматі ДД.ММ.РРРР . Наприклад: 13.03.2025 👇',
-    image: null,
-    data: new Date().toISOString(),
-    message: {messageText: ''},
-  },
-  {
-    id: 3,
-    name: 'AP Logistic ',
-    countMessage: 1,
-    lastMessage:
-      'Ласкаво просимо у головне меню АП Помічник Бажаємо приємного користування! ☀️',
-    image: null,
-    data: new Date().toISOString(),
-    message: {messageText: ''},
-  },
-];
-
 type fieldSearch = InferType<typeof schemaFieldSearch>;
 type fieldMessages = InferType<typeof schemaMessage>;

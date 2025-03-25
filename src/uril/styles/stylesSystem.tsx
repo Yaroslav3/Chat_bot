@@ -12,6 +12,7 @@ export const COLOR_SYSTEM: Record<
     colorMenu: string;
     colorBtn: string;
     colorMessage: string;
+    colorMessageSend: string;
     colorMessageText: string;
   }
 > = {
@@ -25,6 +26,7 @@ export const COLOR_SYSTEM: Record<
     colorMenu: 'rgb(59,85,177)',
     colorBtn: 'rgb(38,47,60)',
     colorMessage: 'rgb(38,47,60)',
+    colorMessageSend: 'rgb(52,81,117)',
     colorMessageText: 'rgb(251,249,249)',
   },
   WHITE: {
@@ -37,10 +39,14 @@ export const COLOR_SYSTEM: Record<
     colorMenu: 'rgb(59,85,177)',
     colorBtn: 'rgb(59,85,177)',
     colorMessage: 'rgb(38,47,60)',
+    colorMessageSend: 'rgb(38,47,60)',
     colorMessageText: 'rgb(38,47,60)',
   },
 };
 
-export const getColorProperty = (theme: TypeTheme, property: keyof (typeof COLOR_SYSTEM)[TypeTheme]) => {
+export const getColorProperty = (
+  theme: TypeTheme,
+  property: keyof (typeof COLOR_SYSTEM)[TypeTheme],
+) => {
   return COLOR_SYSTEM[theme][property];
 };

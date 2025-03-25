@@ -4,15 +4,35 @@ import { TypeTheme } from '../../store/state/devise-system.tsx';
 import { useTheme } from '../../uril/hooks/useTheme.tsx';
 import { getColorProperty } from '../../uril/styles/stylesSystem.tsx';
 import { CoreModelsInterface } from '../../interface/core-models-interface.tsx';
+import {sendMessageService} from '../../service/messages/send-message.service.ts';
+import {TypeApiMessageEnum} from '../../enum/type-api-message.enum.tsx';
+import {addedMessageDB} from '../../database/repository/message.tsx';
+import {useDispatch} from 'react-redux';
+import {setLastMessage, updateChat} from '../../store/state/state.reducer.tsx';
+import {TypeMessageEnum} from '../../enum/type-message.enum.tsx';
 
-export const MenuKeyboard: React.FC<{ dataBtn: Array<CoreModelsInterface.BtnDataMenu[]> }> = ({ dataBtn }) => {
+export const MenuKeyboard: React.FC<{ dataBtn: Array<CoreModelsInterface.BtnDataMenu[]>, chat: CoreModelsInterface.Bot }> = ({ dataBtn, chat }) => {
+    const dispatch = useDispatch();
     const theme = useTheme();
     const styles = useMemo(() => createStyles(theme as TypeTheme), [theme]);
+
+    const handelPressBtn = async (button: CoreModelsInterface.BtnDataMenu) => {
+      await addedMessageDB(chat?.id, button.text, [], new Date().toISOString(), TypeMessageEnum.CLIENT);
+        dispatch(updateChat({chatId: chat.id}));
+        dispatch(setLastMessage({chat: chat, message: button.text}));
+      const value: CoreModelsInterface.MessageApi = {
+        nameBot: chat.username,
+        idChat: chat.id,
+        type: TypeApiMessageEnum.KEYBOARD,
+        targetText: button.text,
+      };
+      await sendMessageService(value);
+    };
 
     const renderRow = ({ item }: { item: CoreModelsInterface.BtnDataMenu[] }) => (
         <View style={styles.row}>
             {item.map((button, index) => (
-                <TouchableOpacity key={index} style={styles.button}>
+                <TouchableOpacity key={index} style={styles.button} onPress={() => handelPressBtn(button)}>
                     <Text style={styles.buttonText} numberOfLines={1} ellipsizeMode="tail">
                         {button.text}
                     </Text>
@@ -37,7 +57,8 @@ export const MenuKeyboard: React.FC<{ dataBtn: Array<CoreModelsInterface.BtnData
 
 const createStyles = (key: TypeTheme) => {
     return StyleSheet.create({
-        container: {},
+        container: {
+        },
         gridContainer: {},
         row: {
             flexDirection: 'row',
@@ -49,6 +70,7 @@ const createStyles = (key: TypeTheme) => {
             paddingVertical: 10,
             marginVertical: 5,
             backgroundColor: getColorProperty(key, 'colorBtn'),
+            margin: 4,
             borderRadius: 5,
             justifyContent: 'center',
             alignItems: 'center',
@@ -62,113 +84,3 @@ const createStyles = (key: TypeTheme) => {
         },
     });
 };
-
-// import React, {useMemo} from 'react';
-// import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-// import {TypeTheme} from '../../store/state/devise-system.tsx';
-// import {useTheme} from '../../uril/hooks/useTheme.tsx';
-// import {getColorProperty} from '../../uril/styles/stylesSystem.tsx';
-// import {CoreModelsInterface} from '../../interface/core-models-interface.tsx';
-//
-// // const textTelegram = {
-// //     btn: {
-// //         vacation: '🏝 Створити відпустку',
-// //         reference: '📄 Довідки_Мотивація',
-// //         businessTrip: '🛫 Відрядження',
-// //         lifeSafety: 'Life Safety',
-// //         apMerchant: 'AP Merchant',
-// //         edo: 'EDO',
-// //         taskbar: 'Taskbar',
-// //         apDonate: 'AP Donate',
-// //         englishPay: 'English Pay',
-// //         btn_waiting_for_approve: 'Waiting for Approval',
-// //     },
-// // };
-//
-// // const buttonData = [
-// //     [{text: textTelegram.btn.vacation}, {text: textTelegram.btn.reference}, {text: textTelegram.btn.businessTrip}],
-// //     [{text: textTelegram.btn.lifeSafety}, {text: textTelegram.btn.apMerchant}],
-// //     [{text: textTelegram.btn.edo}, {text: textTelegram.btn.taskbar}, {text: textTelegram.btn.apDonate}],
-// //     [{text: textTelegram.btn.englishPay}, {text: textTelegram.btn.btn_waiting_for_approve}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// //     [{text: textTelegram.btn.englishPay}],
-// // ];
-// // const buttonData = [];
-//
-// export const MenuKeyboard: React.FC<{dataBtn: Array<CoreModelsInterface.BtnDataMenu>}> = ( {dataBtn}) => {
-//     const theme = useTheme();
-//     const styles = useMemo(() => createStyles(theme as TypeTheme), [theme]);
-//     if(!dataBtn.length){
-//         return (<></>);
-//     }
-//     const renderButton = ({ item }: { item: CoreModelsInterface.BtnDataMenu }) => (
-//         <TouchableOpacity style={styles.button}>
-//             <Text style={styles.buttonText} numberOfLines={1} ellipsizeMode="tail">{item.text}</Text>
-//         </TouchableOpacity>
-//     );
-//
-//     const renderRow = ({ dataBtn }: { dataBtn: Array<CoreModelsInterface.BtnDataMenu> }) => (
-//         <View style={styles.row}>
-//             {dataBtn.map((button, index) => (
-//                 <View key={index} style={styles.buttonContainer}>
-//                     {renderButton({ item: button })}
-//                 </View>
-//             ))}
-//         </View>
-//     );
-//
-//     return (
-//         <View style={styles.container}>
-//             <FlatList
-//                 data={dataBtn}
-//                 renderItem={renderRow}
-//                 keyExtractor={(item, index) => index.toString()}
-//                 contentContainerStyle={styles.gridContainer}
-//                 showsVerticalScrollIndicator={false}
-//                 showsHorizontalScrollIndicator={false}
-//             />
-//         </View>
-//     );
-// };
-//
-//
-// const createStyles = (key: TypeTheme) => {
-//     return StyleSheet.create({
-//         container: {},
-//         gridContainer: {},
-//         row: {
-//             flexDirection: 'row',
-//             flexWrap: 'wrap',
-//             justifyContent: 'space-between',
-//         },
-//         buttonContainer: {
-//             flex: 1,
-//             margin: 5,
-//             marginBottom: -2,
-//         },
-//         button: {
-//             paddingVertical: 10,
-//             marginVertical: 5,
-//             backgroundColor:  getColorProperty(key, 'colorBtn'),
-//             borderRadius: 5,
-//             justifyContent: 'center',
-//             alignItems: 'center',
-//         },
-//         buttonText: {
-//             padding: 5,
-//             color: 'white',
-//             fontSize: 14,
-//             fontWeight: 'bold',
-//             textAlign: 'center',
-//         },
-//     });
-// };

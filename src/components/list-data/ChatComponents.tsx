@@ -9,7 +9,7 @@ import {useDispatch} from 'react-redux';
 import {selectChat} from '../../store/state/state.reducer.tsx';
 
 
-export const ChatComponent: React.FC<{ item: CoreModelsInterface.Chat }> = ({ item }) => {
+export const ChatComponent: React.FC<{ item: CoreModelsInterface.Bot }> = ({ item }) => {
 
     const dispatch = useDispatch();
     const [isHovered, setIsHovered] = useState(false);

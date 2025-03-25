@@ -10,7 +10,7 @@ import {useScreenLayout} from '../service/helper.service.tsx';
 
 export const StartScreen: React.FC = () => {
   const { isShowRight, widthLeft } = useScreenLayout();
-  const selectChat: CoreModelsInterface.Chat | null = useSelector((state: RootState) => state.dataChats.selectChat);
+  const selectChat: CoreModelsInterface.Bot | null = useSelector((state: RootState) => state.dataChats.selectChat);
 
   // desktop version
   if (isShowRight) {
