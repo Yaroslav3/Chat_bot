@@ -52,6 +52,7 @@ export namespace CoreModelsInterface {
 
   export interface BtnDataMenu {
     text: string
+    callback_data?: any;
   }
 
   export interface BtnDataInlineBtn {
@@ -65,6 +66,7 @@ export namespace CoreModelsInterface {
     type: TypeApiMessageEnum,
     targetText: string
     phone?: string,
+    data?: any
   }
   export interface MessageApiUI extends MessageApi {
     keyboardMenu: Array<BtnDataMenu>[];

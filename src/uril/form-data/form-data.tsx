@@ -23,7 +23,7 @@ export const fieldsMessage: Array<CoreModelsInterface.DataFiled> = [
     name: 'message',
     type: 'textarea',
     label: '',
-    placeholder: 'Написаи повідомлення...',
+    placeholder: 'Написати повідомлення...',
   },
 ];
 type fieldSearch = InferType<typeof schemaFieldSearch>;

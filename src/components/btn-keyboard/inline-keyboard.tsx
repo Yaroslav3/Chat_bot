@@ -7,9 +7,9 @@ import {TypeApiMessageEnum} from '../../enum/type-api-message.enum.tsx';
 import {sendMessageService} from '../../service/messages/send-message.service.ts';
 import {getColorProperty} from '../../uril/styles/stylesSystem.tsx';
 import {addedMessageDB} from '../../database/repository/message.tsx';
-import {setLastMessage, updateChat} from '../../store/state/state.reducer.tsx';
+import {selectChat, setLastMessage, updateChat} from '../../store/state/state.reducer.tsx';
 import {useDispatch} from 'react-redux';
-import {TypeMessageEnum} from '../../enum/type-message.enum.tsx';
+import {TypeMessageEnum, TypeMessageTextEnum} from '../../enum/type-message.enum.tsx';
 
 export const InlineKeyboard: React.FC<{ dataBtn: Array<CoreModelsInterface.BtnDataInlineBtn[]>, chat: CoreModelsInterface.Bot }> = ({ dataBtn, chat }) => {
     const dispatch = useDispatch();
@@ -17,14 +17,17 @@ export const InlineKeyboard: React.FC<{ dataBtn: Array<CoreModelsInterface.BtnDa
     const styles = useMemo(() => createStyles(theme as TypeTheme), [theme]);
 
     const handelPressBtn = async (button: CoreModelsInterface.BtnDataMenu) => {
-        await addedMessageDB(chat?.id, button.text, [], new Date().toISOString(), TypeMessageEnum.CLIENT);
+        await addedMessageDB(chat?.id, button.text, [], new Date().toISOString(),
+            TypeMessageEnum.CLIENT, TypeMessageTextEnum.TEXT);
         dispatch(updateChat({chatId: chat.id}));
         dispatch(setLastMessage({chat: chat, message: button.text}));
+        dispatch(selectChat({ ...chat }));
         const value: CoreModelsInterface.MessageApi = {
             nameBot: chat.username,
             idChat: chat.id,
             type: TypeApiMessageEnum.INLINE_KEYBOARD,
             targetText: button.text,
+            data: button,
         };
         await sendMessageService(value);
     };
@@ -59,6 +62,8 @@ const createStyles = (key: TypeTheme) => {
     return StyleSheet.create({
         container: {
             margin: 5,
+            maxWidth: 510,
+            minWidth: 300,
         },
         gridContainer: {},
         row: {

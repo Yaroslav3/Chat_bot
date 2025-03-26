@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState, useRef} from 'react';
 import {store} from './src/store/store.tsx';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Linking} from 'react-native';
 import {Provider, useDispatch} from 'react-redux';
 import {StartScreen} from './src/page/start.tsx';
 import {getColorProperty} from './src/uril/styles/stylesSystem.tsx';
@@ -19,7 +19,7 @@ import {getAllChats} from './src/service/api/https/api-send-message.service.tsx'
 import {addedBtnMenuDB} from './src/database/repository/btnMenu.tsx';
 import {CoreModelsInterface} from './src/interface/core-models-interface.tsx';
 import {addedMessageDB} from './src/database/repository/message.tsx';
-import {TypeMessageEnum} from './src/enum/type-message.enum.tsx';
+import {TypeMessageEnum, TypeMessageTextEnum} from './src/enum/type-message.enum.tsx';
 
 const App: React.FC = () => {
   initSocket();
@@ -36,6 +36,7 @@ const MainComponent: React.FC = () => {
   const subscriptionsRef = useRef<{[key: string]: () => void}>({});
 
   useEffect(() => {
+    console.log('_MainComponent__')
     const fetchBots = async () => {
       try {
         const data = await getAllChats();
@@ -54,22 +55,27 @@ const MainComponent: React.FC = () => {
                       new Date().toISOString(),
                     );
                   }
-                  let result = await addedMessageDB(
-                    newMessage.idChat,
-                    newMessage.targetText,
-                    newMessage.keyboardInline,
-                    new Date().toISOString(),
+
+                  if (newMessage.typeMessage === TypeMessageTextEnum.URL) {
+                    Linking.openURL(newMessage.targetText);
+                  } else {
+                    let result = await addedMessageDB(
+                      newMessage.idChat,
+                      newMessage.targetText,
+                      newMessage.keyboardInline,
+                      new Date().toISOString(),
                       newMessage.typeMessage,
                       newMessage.typeMessage,
-                    TypeMessageEnum.SERVER,
-                  );
-                  dispatch(
-                    newMessageInSocket({
-                      chatId: newMessage.idChat,
-                      key: true,
-                      newMessage: result,
-                    }),
-                  );
+                      TypeMessageEnum.SERVER,
+                    );
+                    dispatch(
+                      newMessageInSocket({
+                        chatId: newMessage.idChat,
+                        key: true,
+                        newMessage: result,
+                      }),
+                    );
+                  }
                 }
               },
             );

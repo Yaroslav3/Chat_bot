@@ -59,7 +59,7 @@ export const stateData = createSlice({
     countMessage: (state, action: PayloadAction<{chatId: string}>) => {
       const chat = state.dataChats.find(x => x?.id === action?.payload?.chatId);
       if(chat){
-        chat.countMessage = 0
+        chat.countMessage = 0;
       }
     },
     updateChat: (state, action: PayloadAction<{chatId: string}>) => {}

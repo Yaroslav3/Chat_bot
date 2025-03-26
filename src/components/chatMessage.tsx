@@ -51,7 +51,7 @@ const createStyles = (key: TypeTheme) => {
             marginVertical: 5,
             marginHorizontal: 10,
             position: 'relative',
-            maxWidth: '80%',
+            maxWidth: 500,
         },
         currentUserMessage: {
             alignSelf: 'flex-end',

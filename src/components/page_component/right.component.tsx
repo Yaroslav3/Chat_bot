@@ -33,7 +33,7 @@ import {InlineKeyboard} from '../btn-keyboard/inline-keyboard.tsx';
 import {sendMessageApi} from '../../service/api/https/api-send-message.service.tsx';
 import {TypeApiMessageEnum} from '../../enum/type-api-message.enum.tsx';
 import DeleteBtnSvg from '../../uril/svg/deleteBtnSvg.tsx';
-import {TypeMessageEnum} from '../../enum/type-message.enum.tsx';
+import {TypeMessageEnum, TypeMessageTextEnum} from '../../enum/type-message.enum.tsx';
 
 export const RightComponent: React.FC<any> = () => {
     const dispatch = useDispatch();
@@ -62,7 +62,6 @@ export const RightComponent: React.FC<any> = () => {
             }
         };
         fetchData();
-        console.log('___');
     }, [dispatch, newMessage, selectChat?.id]);
 
     const { control: control, handleSubmit: handleMessage, watch, setValue } = useForm<CoreModelsInterface.IFormMessage>({
@@ -118,20 +117,19 @@ export const RightComponent: React.FC<any> = () => {
     const addedMessage: SubmitHandler<CoreModelsInterface.IFormMessage> = async (data) => {
         try {
             if(selectChat){
-                if (selectChat) {
-                    const dataMessage :CoreModelsInterface.MessageApi = {
-                        nameBot: selectChat.username,
-                        idChat: selectChat.id,
-                        type: TypeApiMessageEnum.TEXT,
-                        targetText: data.message,
-                    };
-                    await sendMessageApi(selectChat.id.toString(), dataMessage);
-                    await addedMessageDB(selectChat?.id, data.message, [],new Date().toISOString(),  TypeMessageEnum.CLIENT);
-                    dispatch(setLastMessage({ chat: selectChat, message: data.message }));
-                    setValue('message', '');
-                    dispatch(setMessageInput({ chat: selectChat, message: '' }));
-                    setMessages(await getAllMessageByIDChatDB(selectChat.id));
-                }
+                await addedMessageDB(selectChat?.id, data.message.toString(), [],new Date().toISOString(),
+                    TypeMessageEnum.CLIENT, TypeMessageTextEnum.TEXT);
+                const dataMessage :CoreModelsInterface.MessageApi = {
+                    nameBot: selectChat.username,
+                    idChat: selectChat.id,
+                    type: TypeApiMessageEnum.TEXT,
+                    targetText: data.message,
+                };
+                await sendMessageApi(selectChat.id.toString(), dataMessage);
+                dispatch(setLastMessage({ chat: selectChat, message: data.message }));
+                setValue('message', '');
+                dispatch(setMessageInput({ chat: selectChat, message: '' }));
+                setMessages(await getAllMessageByIDChatDB(selectChat.id));
             }
         } catch (error) {
             console.error('Error inserting message:', error);
@@ -175,9 +173,11 @@ export const RightComponent: React.FC<any> = () => {
             <View style={styles.header}>
                 <View style={styles.header_left}>
                     {width < screenMob && (
-                        <TouchableOpacity style={styles.header_back} onPress={() => handleBack()}>
-                            <ArrowLeftSvg width={iconSize} height={iconSize} color="#ccc" />
-                        </TouchableOpacity>
+                        <View style={styles.header_left_back}>
+                            <TouchableOpacity style={styles.header_left_back_btn} onPress={() => handleBack()}>
+                                <ArrowLeftSvg width={iconSize} height={iconSize} color="#ccc" />
+                            </TouchableOpacity>
+                        </View>
                     )}
                     <View style={styles.header_bl}>
                         <Text style={styles.header_bl_name}>{selectChat.name}</Text>
@@ -254,15 +254,19 @@ const createStyles = (key: TypeTheme) => {
             backgroundColor: getColorProperty(key, 'backgroundColor'),
         },
         header_left:{
-            flex: 1,
+            flexDirection: 'row',
         },
-        header_back: {
+        header_left_back: {
+        },
+        header_left_back_btn: {
             height: 50,
             justifyContent: 'center',
         },
         header_bl: {
             padding: 10,
-            paddingLeft: 20,
+            paddingLeft: 35,
+            flex: 1,
+            justifyContent: 'center',
         },
         header_right:{
             flex: 1,
@@ -365,7 +369,7 @@ const createStyles = (key: TypeTheme) => {
             maxHeight: '100%',
         },
         messageContainer: {
-            maxWidth: 700,
+            // maxWidth: 700,
             minWidth: 100,
             position: 'relative',
         },

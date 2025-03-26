@@ -1,5 +1,4 @@
 
-import {HTTP, SERVER_IP} from './socketApi.tsx';
 import io from 'socket.io-client';
 
 
